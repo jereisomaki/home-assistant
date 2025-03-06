@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+
+# Log files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# VSCode settings
+.vscode/
+
+# MacOS files
+.DS_Store
+
+# IDE/Editor specific
+.idea/
+*.sublime-workspace
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# React Native
+.expo/
+
+# Misc
+*.tgz
