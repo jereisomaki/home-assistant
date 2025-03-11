@@ -1,6 +1,4 @@
-const ThemeController = ({ theme, onChange }) => {
-  const checked = theme === "light" ? true : false;
-
+const ThemeController = ({ checked, onChange }) => {
   return (
     <label className="swap swap-rotate">
       <input type="checkbox" checked={checked} onChange={onChange} className="theme-controller" value="synthwave" />
