@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { todaysElectricityPrices, tomorrowsElectricityPrices } from "../API/electricityApi";
 import { formatCurrentDate, formatDate, formatPrice } from "../utils/formatting";
-import { useFetch } from "../hooks/useFetch";
+import { useQuery } from "@tanstack/react-query";
 
 import Wrapper from "../components/Wrapper";
 import BarChart from "../components/BarChart";
@@ -83,10 +83,26 @@ const currentPrice = (data) => {
 const ElectricityPriceData = ({ t }) => {
   const [showTomorrowData, setShowTomorrowData] = useState(false);
 
-  const [todayData, todayRrror, todayLoading] = useFetch(todaysElectricityPrices);
-  const [tomorrowData, tomorrowError, tomorrowLoading] = useFetch(tomorrowsElectricityPrices);
+  const {
+    data: todayData,
+    error: todayError,
+    isPending: todayPending,
+  } = useQuery({ queryKey: ["today"], queryFn: todaysElectricityPrices });
 
-  if (todayRrror || tomorrowError) return null;
+  const {
+    data: tomorrowData,
+    error: _tomorrowError,
+    isPending: tomorrowPending,
+  } = useQuery({
+    queryKey: ["tomorrow"],
+    queryFn: tomorrowsElectricityPrices,
+    retry: (failureCount, error) => {
+      if (error.response?.status === 404) return false;
+      return failureCount < 2;
+    },
+  });
+
+  if (todayError) return null;
 
   const todaysChartData = makeChartData(todayData);
   const tomorrowsChartData = showTomorrowData ? makeChartData(tomorrowData) : [];
@@ -102,7 +118,7 @@ const ElectricityPriceData = ({ t }) => {
   return (
     <>
       <div className="flex flex-col gap-4 w-full h-full p-4">
-        {todayLoading || tomorrowLoading ? (
+        {todayPending || tomorrowPending ? (
           <div className="flex justify-center w-full h-full">
             <Loader />
           </div>
